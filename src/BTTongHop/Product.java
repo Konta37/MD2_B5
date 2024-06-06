@@ -92,8 +92,8 @@ public class Product {
                 boolean isExist = false;
                 for(int i=1;i<Main.currentProductIndex;i++){
                     if(Main.productArray[i].getProductId().equals(productId)){
-                        System.out.println("Product ID already exists!");
                         isExist = true;
+                        break;
                     }
                 }
                 if(isExist){
