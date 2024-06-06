@@ -12,6 +12,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         mainMenu(sc);
     }
+
     public static void mainMenu(Scanner sc) {
         do {
             System.out.println("==========MENU==========");
@@ -51,10 +52,13 @@ public class Main {
                     displayCategory(sc);
                     break;
                 case 3:
+                    updateCategory(sc);
                     break;
                 case 4:
+                    deleteCategory(sc);
                     break;
                 case 5:
+                    updateStatusCategory(sc);
                     break;
                 case 6:
                     mainMenu(sc);
@@ -75,6 +79,7 @@ public class Main {
         }
     }
 
+    //show list category
     public static void displayCategory(Scanner sc) {
         for (int i = 0; i < currentCategoryIndex; i++) {
             categoriesArray[i].displayData();
@@ -86,6 +91,7 @@ public class Main {
         String categoryId = sc.nextLine();
         int indexUpdate = getIndexById(categoryId);
         if (indexUpdate != -1) {
+//            Categories updateCategoryById = categoriesArray[indexUpdate];
             boolean isExit = true;
             do {
                 System.out.println("1. Update Category Name");
@@ -95,18 +101,59 @@ public class Main {
                 int choice = Integer.parseInt(sc.nextLine());
                 switch (choice) {
                     case 1:
-                        categoriesArray[indexUpdate].setCategoryName(sc.nextLine());
+                        categoriesArray[indexUpdate].setCategoryName(categoriesArray[indexUpdate].inputCategoryName(sc));
                         break;
                     case 2:
-                        categoriesArray[indexUpdate].setCategoryDescription(sc.nextLine());
+                        categoriesArray[indexUpdate].setCategoryDescription(categoriesArray[indexUpdate].inputCategoryDescription(sc));
                         break;
                     case 3:
-                        categoriesArray[indexUpdate].setCategoryStatus(Boolean.parseBoolean(sc.nextLine()));
+                        categoriesArray[indexUpdate].setCategoryStatus(categoriesArray[indexUpdate].inputCategoryStatus(sc));
                         break;
                     default:
                         isExit = false;
                 }
             } while (isExit);
+        } else {
+            System.err.println("Invalid Category ID");
+        }
+    }
+
+    //delete
+    public static void deleteCategory(Scanner sc) {
+        System.out.println("Enter category id to delete (S00x):");
+        String categoryId = sc.nextLine();
+        int indexDelete = getIndexById(categoryId);
+        if (indexDelete != -1) {
+            boolean isExist = false;
+            for (int i = 0; i < currentProductIndex; i++) {
+                if (productArray[i].getCatagoryId().equals(categoryId)) {
+                    //if any product has category id -> cant delete
+                    isExist = true;
+                    break;
+                }
+            }
+            if (isExist) {
+                System.out.println("This category linked with many products. So can't delete");
+            } else {
+                for (int i = indexDelete; i < currentCategoryIndex; i++) {
+                    categoriesArray[i] = categoriesArray[i + 1];
+                }
+                currentCategoryIndex--;
+            }
+        } else {
+            System.err.println("Invalid Category ID");
+        }
+    }
+
+    //update status of category
+    public static void updateStatusCategory(Scanner sc) {
+        System.out.println("Enter Category ID (example: S00x)");
+        String categoryId = sc.nextLine();
+        int indexUpdate = getIndexById(categoryId);
+
+        if (indexUpdate != -1) {
+            System.out.println("Change status of category. Current Status: " + categoriesArray[indexUpdate].getCategoryStatus());
+            categoriesArray[indexUpdate].setCategoryStatus(categoriesArray[indexUpdate].inputCategoryStatus(sc));
         } else {
             System.err.println("Invalid Category ID");
         }
@@ -144,20 +191,26 @@ public class Main {
                     displayProduct(sc);
                     break;
                 case 3:
+                    sortProductWithPrice();
                     break;
                 case 4:
+                    updateProduct(sc);
                     break;
                 case 5:
+                    deleteProduct(sc);
                     break;
                 case 6:
+                    searchProductByName(sc);
                     break;
                 case 7:
+                    searchProductByPrice(sc);
                     break;
                 case 8:
                     mainMenu(sc);
             }
-        }while (true);
+        } while (true);
     }
+
     public static void inputListProduct(Scanner sc) {
         System.out.println("Enter Number of Product");
         int numberOfProducts = Integer.parseInt(sc.nextLine());
@@ -167,13 +220,125 @@ public class Main {
             currentProductIndex++;
         }
     }
-    public static void displayProduct(Scanner sc){
+
+    public static void displayProduct(Scanner sc) {
         for (int i = 0; i < currentProductIndex; i++) {
             productArray[i].displayData();
         }
     }
 
-    public static void UpdateCategory(Scanner sc) {
-        System.out.println("Enter Category ID (example: S00x)");
+    public static void sortProductWithPrice() {
+        for (int i = 0; i < currentProductIndex; i++) {
+            for (int j = i + 1; j < currentProductIndex; j++) {
+                if (productArray[i].getPrice() > productArray[j].getPrice()) {
+                    Product temp = productArray[i];
+                    productArray[i] = productArray[j];
+                    productArray[j] = temp;
+                }
+            }
+        }
+        System.out.println("Finished sort products by price (low to high)");
     }
+
+    public static void updateProduct(Scanner sc) {
+        System.out.println("Enter Product ID (example: C00x)");
+        String productId = sc.nextLine();
+        int indexUpdate = getIndexProductById(productId);
+        if (indexUpdate != -1) {
+            boolean isExit = true;
+            do {
+                System.out.println("1. Update Product Name");
+                System.out.println("2. Update Product Price");
+                System.out.println("3. Update Product Description");
+                System.out.println("4. Update Product Date Created");
+                System.out.println("5. Update Product Category ID");
+                System.out.println("6. Update Product Status");
+                System.out.println("7. Exit");
+                int choice = Integer.parseInt(sc.nextLine());
+                switch (choice) {
+                    case 1:
+                        productArray[indexUpdate].setProductName(productArray[indexUpdate].inputProductName(sc));
+                        break;
+                    case 2:
+                        productArray[indexUpdate].setPrice(productArray[indexUpdate].inputProductPrice(sc));
+                        break;
+                    case 3:
+                        productArray[indexUpdate].setDescription(productArray[indexUpdate].inputProductDescription(sc));
+                        break;
+                    case 4:
+                        productArray[indexUpdate].setCreated(productArray[indexUpdate].inputProductCreated(sc));
+                        break;
+                    case 5:
+                        productArray[indexUpdate].setCatagoryId(productArray[indexUpdate].inputCategoryId(sc));
+                        break;
+                    case 6:
+                        productArray[indexUpdate].setStatus(productArray[indexUpdate].inputStatus(sc));
+                        break;
+                    case 7:
+                        menuProductManagement(sc);
+                        break;
+                    default:
+                        isExit = false;
+                }
+            } while (isExit);
+        } else {
+            System.err.println("Invalid Category ID");
+        }
+    }
+
+    public static void deleteProduct(Scanner sc) {
+        System.out.println("Enter Product id to delete (C00x):");
+        String productId = sc.nextLine();
+        int indexDelete = getIndexProductById(productId);
+        if (indexDelete != -1) {
+            for (int i = indexDelete; i < currentProductIndex; i++) {
+                productArray[i] = productArray[i + 1];
+            }
+            currentProductIndex--;
+        } else {
+            System.err.println("Invalid Product ID");
+        }
+    }
+
+    public static void searchProductByName(Scanner sc) {
+        System.out.println("Enter Product name: ");
+        String productNameSearch = sc.nextLine();
+        int cntProduct = 0;
+        System.out.printf("Product with that name (%s): ", productNameSearch);
+        for (int i = 0; i < currentProductIndex; i++) {
+            if (productArray[i].getProductName().toLowerCase().equals(productNameSearch)) {
+                productArray[i].displayData();
+                cntProduct++;
+            }
+        }
+        System.out.printf("There are %d products had found", cntProduct);
+    }
+
+    public static void searchProductByPrice(Scanner sc) {
+        System.out.println("Enter Product start price (low to high):");
+        double productPriceSearchStart = Double.parseDouble(sc.nextLine());
+        System.out.println("Enter Product end price (low to high):");
+        double productPriceSearchEnd = Double.parseDouble(sc.nextLine());
+        int cntProduct = 0;
+        for(int i = 0; i < currentProductIndex; i++) {
+            if (productArray[i].getPrice() >= productPriceSearchStart &&
+                    productArray[i].getPrice() <= productPriceSearchEnd) {
+                productArray[i].displayData();
+            }
+        }
+        System.out.printf("There are %d products had found", cntProduct);
+
+    }
+
+    //tim index. ko thay thi =-1
+    public static int getIndexProductById(String productId) {
+        for (int i = 0; i < currentProductIndex; i++) {
+            if (productArray[i].getProductId().equals(productId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
 }

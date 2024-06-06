@@ -40,7 +40,7 @@ public class Categories {
         this.categoryDescription = categoryDescription;
     }
 
-    public boolean isCategoryStatus() {
+    public boolean getCategoryStatus() {
         return categoryStatus;
     }
 
@@ -52,14 +52,14 @@ public class Categories {
 
         //id auto S001
 //        this.categoryId = "S"+String.valueOf ((index));
-        this.categoryId = String.format("%03d",index);
+        this.categoryId = "S" +String.format("%03d",index);
         //
         this.categoryName = inputCategoryName(sc);
         this.categoryDescription = inputCategoryDescription(sc);
         this.categoryStatus = inputCategoryStatus(sc);
     }
     public void displayData(){
-        System.out.printf("id: S%s     status:%s\nName: %s\nDescription: %s\n", categoryId, categoryStatus,categoryName,categoryDescription);
+        System.out.printf("id: %s     status:%s\nName: %s\nDescription: %s\n", categoryId, categoryStatus,categoryName,categoryDescription);
     }
 
     //validate name

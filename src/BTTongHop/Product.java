@@ -14,8 +14,8 @@ public class Product {
     private String description;
     private String created;
     private String catagoryId;
-
     private int status;
+
     public Product(){}
 
     public String getProductName() {
@@ -185,14 +185,13 @@ public class Product {
                 for(int i = 0; i< Main.currentCategoryIndex; i++){
                     if(Main.categoriesArray[i].getCategoryId().equals(categoryId)){
                         isExist = true;
-                        
                         break;
                     }
                 }
                 if(isExist){
-                    System.err.println("Category ID already exists!");
-                }else {
                     return categoryId;
+                }else {
+                    System.err.println("There is no Category ID! Please try again.");
                 }
             }else {
                 System.err.println("Invalid category ID! Please enter a valid category ID (S00x)");
